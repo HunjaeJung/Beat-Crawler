@@ -18,7 +18,7 @@ pictureList = []
 # 16의 6승
 limit = pow(16, 6)
 for i in range(limit):
-    trackId = format(limit, 'x')
+    trackId = format(i, 'x')
     base_url = "http://beatpacking.com/tracks/300000000000000000000000" + trackId
 
     # 해당 URI가 404가 아닐때 가수명, 곡명, 사진을 가져옴
@@ -37,8 +37,10 @@ for i in range(limit):
             pictureList.append(picture['src'].strip())
 
         trackIdList.append(trackId)
+        print "success"
 
-    except IOError:
+    except IOError as e:
+        print e
         continue
 
 # 저장한 가수명의 수만큼 반복문을 돌리기 위한 변수
