@@ -9,17 +9,31 @@ sys.setdefaultencoding('utf-8')
 
 # akmu = "http://beatpacking.com/tracks/3000000000000000000000009ecd9c"
 # errorUrl = "http://beatpacking.com/tracks/3000000000000000000000009ecd97"
+# 0010a2에는 가수 이름이 없음. 그래서 중간에 오류남.
 
 trackIdprefix = "000000"
 
+# 16의 6승
+limit = pow(16, 6)
+
+# crawl machines information
+total_machines_num = 8				# total number of machines
+this_machine_num = 1				# this machine number
+one_cycle = limit/total_machines_num		# one cycle range
+start_point = one_cycle*(this_machine_num-1)	# starting point
+end_point = one_cycle*this_machine_num		# end point
+
+writable_artist = ""
+writable_title = ""
+writable_picture = ""
+
 # csv 파일명
 file_name = "beat_tracks_info"
+file_name = file_name + "-" + str(this_machine_num)
 csvFile = open(file_name, 'wb')
 writer = csv.writer(csvFile, csv.excel)
 
-# 16의 6승
-limit = pow(16, 6)
-for i in range(limit):
+for i in range(start_point,end_point):
     trackIdToHex = format(i, 'x')
     trackIdToHexLength = len(trackIdToHex)
     tempTrackId = trackIdprefix + trackIdToHex
@@ -33,7 +47,24 @@ for i in range(limit):
         artist = soup.select('.container > .thumbnail > .caption > .track-data > .artist')
         title = soup.select('.container > .thumbnail > .caption > .track-data > .track-name')
         picture = soup.select('.container > .thumbnail > .link > img')
-        writer.writerow([artist[0].get_text().strip(), title[0].get_text().strip(), picture[0]['src'].strip(), trackId])
+	
+	if not artist: #artist is empty 
+		writable_artist="null"
+	else:
+		writable_artist = artist[0].get_text().strip()
+		
+	if not title: #title is empty 
+		writable_title="null"
+	else:
+		writable_title = title[0].get_text().strip()
+		writable_title = writable_title[:len(writable_title)-1]
+
+	if not picture: #picture is empty
+		writable_picture = "null"
+	else:
+		writable_picture = picture[0]['src'].strip()
+
+        writer.writerow([writable_artist, writable_title, writable_picture, trackId])
 
         print "TrackId : %s Success" % trackId
 
