@@ -71,21 +71,21 @@ for i in range(start_point,end_point):
         title = soup.select('.container > .thumbnail > .caption > .track-data > .track-name')
         picture = soup.select('.container > .thumbnail > .link > img')
 	
-	if not artist: #artist is empty 
-		writable_artist="null"
-	else:
-		writable_artist = artist[0].get_text().strip()
-		
-	if not title: #title is empty 
-		writable_title="null"
-	else:
-		writable_title = title[0].get_text().strip()
-		writable_title = writable_title[:len(writable_title)-1]
+    	if not artist: #artist is empty 
+    		writable_artist="null"
+    	else:
+    		writable_artist = artist[0].get_text().strip()
+    		
+    	if not title: #title is empty 
+    		writable_title="null"
+    	else:
+    		writable_title = title[0].get_text().strip()
+    		writable_title = writable_title[:len(writable_title)-1]
 
-	if not picture: #picture is empty
-		writable_picture = "null"
-	else:
-		writable_picture = picture[0]['src'].strip()
+    	if not picture: #picture is empty
+    		writable_picture = "null"
+    	else:
+    		writable_picture = picture[0]['src'].strip()
 
         writer.writerow([writable_artist, writable_title, writable_picture, trackId])
 
