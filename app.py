@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from urllib2 import urlopen
 import sys
 import csv
+import time
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -33,13 +34,35 @@ file_name = file_name + "-" + str(this_machine_num)
 csvFile = open(file_name, 'wb')
 writer = csv.writer(csvFile, csv.excel)
 
+# 남은 시간 계산
+time_diff = 0	
+proc_before = 0
+proc_now = 0
+
 for i in range(start_point,end_point):
+	
     trackIdToHex = format(i, 'x')
     trackIdToHexLength = len(trackIdToHex)
     tempTrackId = trackIdprefix + trackIdToHex
     trackId = tempTrackId[trackIdToHexLength:]
 
     base_url = "http://beatpacking.com/tracks/300000000000000000000000" + trackId
+
+    if i != start_point:
+    	proc_now = time.time()
+
+    	if proc_now != proc_before:
+		time_diff = proc_now - proc_before
+		proc_before = proc_now
+
+	total_time_left = time_diff * (end_point - i) # sec left
+	min, sec = divmod(total_time_left,60)
+	hour, min = divmod(min, 60)
+	day, hour = divmod(hour, 24)
+	
+	print "%d일 %d시간 %d분 %d초 남았습니다." % (day, hour, min, sec)
+    else:
+    	proc_before = time.time()
 
     # 해당 URI가 404가 아닐때 가수명, 곡명, 사진을 가져옴
     try:
