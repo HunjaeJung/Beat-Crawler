@@ -14,21 +14,17 @@ import csv
 import sys
 import time
 
-file_name = "./data/beat_tracks_info-1" 
+file_name = "./" 
 
 # navermusic or bugs
 site_name = ["navermusic", "bugs"]
 
 site_url = {"navermusic": "http://music.naver.com/search/search.nhn?query=", \
-				"bugs": "http://search.bugs.co.kr/track?q="}
+		"bugs": "http://search.bugs.co.kr/track?q="}
 
 site_class = {"navermusic": "_play_ico", \
-				"bugs": "btnPlay"}
+		"bugs": "btnPlay"}
 
-# 0: navermusic, 1: bugs
-which_site = 0
-
-# robots.txt는 일단 무시하고, 그냥 하자.
 def crawling_in(sitename, title, artist):
 	title = quote(title)
 	artist = quote(artist) #encodeURI (Korean -> %encode)
@@ -66,15 +62,18 @@ def crawling_in(sitename, title, artist):
 if __name__ == '__main__':
 	# beat data file open
 	with open(file_name, mode='r+', newline='') as f:
-		reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_NONE)
+		
+		for i in range(len(site_name)):
+			reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_NONE)
 
-		# write file open (append new trackid)
-		with open(file_name+"-"+site_name[which_site],'w') as csvFile:
-			writer = csv.writer(csvFile, csv.excel)
+			# write file open (append new trackid)
+			with open(file_name+"-"+site_name[i],'w') as csvFile:
+				writer = csv.writer(csvFile, csv.excel)
 
-			# one by one row
-			for row in reader:
-				artist = row[0]; title = row[1]
-				trackid = crawling_in(site_name[which_site], title, artist)
-				row.append(trackid)
-				writer.writerow(row)
+				# one by one row
+				for row in reader:
+					artist = row[0]; title = row[1]
+					trackid = crawling_in(site_name[i], title, artist)
+					row.append(trackid)
+					writer.writerow(row)
+			f.seek(0)
