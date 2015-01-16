@@ -28,11 +28,6 @@ site_url = {"navermusic": "http://music.naver.com/search/search.nhn?query=", \
 site_class = {"navermusic": "_play_ico", \
 		"bugs": "btnPlay"}
 
-# 남은 시간 계산
-time_diff = 0	
-proc_before = 0
-proc_now = 0
-
 def crawling_in(sitename, title, artist):
 	title = quote(title)
 	artist = quote(artist) #encodeURI (Korean -> %encode)
