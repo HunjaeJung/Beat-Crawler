@@ -46,4 +46,4 @@ def scrapYoutubeMusicId(original_artist, original_title, maxResults):
 		print("more than one match found from regex findall", match_result.group(1,2))
 		return videos[0]["id"]
 
-scrapYoutubeMusicId("빅뱅", "붉은노을", 1)
+# scrapYoutubeMusicId("빅뱅", "붉은노을", 1)

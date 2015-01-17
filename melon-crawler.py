@@ -20,11 +20,12 @@ def scrapMelonMusicId(original_query):
 	html_element = soup.select("#frm_defaultList > div > table > tbody > tr:nth-of-type(1) > td > div > input")
 	music_id_list = re.findall(r'value="(.*)"\s?', str(html_element))
 	if(len(music_id_list) == 0):
-		print("=== not in the html content ===")
+		print("music id not in the html content")
 	else:
+		print("found music id")
 		music_id = music_id_list[0]
-		print(music_id)		
+		return music_id		
 	
-scrapMelonMusicId("빅뱅 붉은 노을");
+# scrapMelonMusicId("빅뱅 붉은 노을");
 
 
