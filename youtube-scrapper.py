@@ -37,12 +37,13 @@ def scrapYoutubeMusicId(original_artist, original_title, maxResults):
 			}
 			videos.append(video)
 	
-	result = re.findall(original_artist + r"+", videos[0]["title"]) 
-	if(len(result) == 0):
-		print("no result")
+	match_result = re.match(r"(" + re.escape(original_artist) + r")?[-\s@]*(" + re.escape(original_title) + r")?", "빅뱅 - 붉은노을")
+	
+	if(match_result.group(1,2)[0] == None and match_result.group(1,2)[1] == None):
+		print("no match found from regex findall")
 		return "0"
 	else:
-		print("no result")
+		print("more than one match found from regex findall", match_result.group(1,2))
 		return videos[0]["id"]
 
 scrapYoutubeMusicId("빅뱅", "붉은노을", 1)
