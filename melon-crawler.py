@@ -8,8 +8,8 @@ import re
 
 ##### Protocol #####
 ### melon-ios: meloniphone://play?ctype=1&menuid=29020101&cid=5536206
-# - prefix: meloniphone://play?ctype=1
-# - appendix: &menuid=29020101&cid=5536206
+# - prefix: meloniphone://play?ctype=1&menuid=29020101&cid=
+# - appendix: 5536206
 ### melon-itunes: https://itunes.apple.com/kr/app/mellon-melon/id415597317?mt=8
 ### melon-android: melonapp://play?ctype=1&menuid=29020101&cid=5536206
 # - prefix: melonapp://play?ctype=1
