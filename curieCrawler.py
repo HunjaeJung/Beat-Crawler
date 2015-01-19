@@ -27,6 +27,9 @@ class Crawler():
 		self.YOUTUBE_API_SERVICE_NAME = "youtube"
 		self.YOUTUBE_API_VERSION = "v3"
 
+	def changeFile(self, fileName):
+		self.fileName = fileName
+
 	def scrapMelon(self, title, artist):
 		try:
 			originalQuery = artist + " " + title
@@ -129,7 +132,7 @@ class Crawler():
 				print("no match found from Bugs")
 				return "0"
 			else:
-				trackId = play_btn[0]['onclick'].split('\'')[1]
+				trackId = playButton[0]['onclick'].split('\'')[1]
 				print("music id is found and it is ", trackId)
 				return trackId
 
