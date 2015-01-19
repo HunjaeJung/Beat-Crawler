@@ -1,3 +1,62 @@
+#----- Protocol -----#
+
+##### Beat #####
+# 1.beat-ios: bpc://landing?type=play_radio&channel_id=60&track_id=300000000000000000000000{{musicId}} 
+# - prefix: bpc://landing?type=play_radio&channel_id=60&track_id=300000000000000000000000
+# - appendix: {{musicId}} 
+# 2.beat-itunes: itms-apps://itunes.apple.com/app/beat-biteu-mulyo-ladio-sosyeol/id853073541?mt=8
+# 3.beat-android: bpc://landing?type=play_radio&channel_id=60&track_id=300000000000000000000000{{musicId}} 
+# - prefix: bpc://landing?type=play_radio&channel_id=60&track_id=300000000000000000000000
+# - appendix: {{musicId}}
+# 4.beat-googleplay: market://details?id=com.beatpacking.beat
+##### End of Bugs #####
+
+##### Bugs #####
+# 1.bugs-ios: bugs3://app/tracks/3285722?autoplay=Y
+# - prefix: bugs3://app/tracks/
+# - appendix: 3285722?autoplay=Y
+# 2.bugs-itunes: itms-apps://itunes.apple.com/kr/app//id348555322?mt=8 
+# 3.bugs-android: 
+# - prefix: bugs3://app/tracks/lists?title=&track_ids=
+# - appendix: {{musicId}}&autoplay=Y
+# 4.bugs-googleplay: market://details?id=com.neowiz.android.bugs
+##### End of Bugs #####
+
+##### Melon #####
+# 1.melon-ios: meloniphone://play?ctype=1&menuid=29020101&cid=5536206
+# - prefix: meloniphone://play?ctype=1&menuid=29020101&cid=
+# - appendix: 5536206
+# 2.melon-itunes: itms-apps://itunes.apple.com/kr/app/mellon-melon/id415597317?mt=8
+# 3.melon-android: melonapp://play?ctype=1&menuid=29020101&cid=5536206
+# - prefix: melonapp://play?ctype=1
+# - appendix: &menuid=29020101&cid=5536206
+# 4.melon-googleplay: market://details?id=com.iloen.melon
+##### End of Melon #####
+
+##### Navermusic #####
+# 1.navermusic-ios: comnhncorpnavermusic://listen?version=3&trackIds=2037246
+# - prefix: comnhncorpnavermusic://listen?version=3&trackIds=
+# - appendix: 2037246
+# 2.navermusic-itunes: itms-apps://itunes.apple.com/kr/app/id437760231
+# 3.navermusic-android: intent://listen?version=3&trackIds=2037246#Intent;scheme=comnhncorpnavermusic;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.music;end
+# - prefix: intent://listen?version=3&trackIds=
+# - appendix: 2037246#Intent;scheme=comnhncorpnavermusic;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.music;end
+# 4.navermusic-googleplay: market://details?id=com.nhn.android.music
+##### End of Bugs #####
+
+##### Youtube #####
+# 1.youtube-ios: 
+# - prefix: vnd.youtube://www.youtube.com/watch?v={{musicId}};feature=applinks
+# - appendix: 
+# 2.youtube-itunes: itms-apps://itunes.apple.com/app/youtube/id544007664?mt=8
+# 3.youtube-android: http://www.youtube.com/watch?v={{musicId}};feature=applinks
+# - prefix: http://www.youtube.com/watch?v=
+# - appendix: {{musicId}};feature=applinks
+# 4.youtube-googleplay: market://details?id=com.google.android.youtube
+##### End of Bugs #####
+
+#----- End of Protocol -----#
+
 ##### Youtube #####
 from apiclient.discovery import build
 from apiclient.errors import HttpError
