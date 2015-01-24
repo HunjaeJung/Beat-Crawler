@@ -89,9 +89,9 @@ class Crawler():
 	def changeFile(self, fileName):
 		self.fileName = fileName
 
-	def scrapMelon(self, title, artist):
+	def scrapMelon(self, title, artist, album):
 		try:
-			originalQuery = artist + " " + title
+			originalQuery = artist + " " + title + " " + album
 			# encode originalQuery into modifiedQuery
 			modifiedQuery = quote(originalQuery)
 			modifiedURL = "http://www.melon.com/search/song/index.htm?q=" + modifiedQuery + "&section=&searchGnbYn=Y&ipath=srch_form"
@@ -114,9 +114,9 @@ class Crawler():
 		except Exception as e: 
 			print("error from scrapMelon method: ", e)
 
-	def scrapYoutube(self, title, artist):
+	def scrapYoutube(self, title, artist, album):
 		try:
-			originalQuery = artist + " " + title
+			originalQuery = artist + " " + title + " " + album
 			
 			youtube = build(self.YOUTUBE_API_SERVICE_NAME, self.YOUTUBE_API_VERSION, developerKey=self.DEVELOPER_KEY)
 
@@ -148,7 +148,7 @@ class Crawler():
 		except Exception as e:
 			print("error from scrapYoutube: ", e)
 
-	def scrapNavermusic(self, title, artist):
+	def scrapNavermusic(self, title, artist, album):
 		try:
 			modifiedURL = "http://music.naver.com/search/search.nhn?query=" + quote(title) 
 			if artist != "null":
@@ -173,7 +173,7 @@ class Crawler():
 		except Exception as e:
 			print("error from scrapNavermusic: ", e)
 
-	def scrapBugs(self, title, artist):
+	def scrapBugs(self, title, artist, album):
 		try:
 			modifiedURL = "http://search.bugs.co.kr/track?q=" + quote(title) 
 			if artist != "null":
@@ -199,18 +199,18 @@ class Crawler():
 			print("error from scrapBugs: ", e)
 
 	
-	def scrapSource(self, source, title, artist):
+	def scrapSource(self, source, title, artist, album):
 		if source == "Melon":
-			musicId = self.scrapMelon(title, artist)
+			musicId = self.scrapMelon(title, artist, album)
 			return musicId
 		elif source == "Youtube":
-			musicId = self.scrapYoutube(title, artist)
+			musicId = self.scrapYoutube(title, artist, album)
 			return musicId
 		elif source == "Navermusic":
-			musicId = self.scrapNavermusic(title, artist)
+			musicId = self.scrapNavermusic(title, artist, album)
 			return musicId
 		elif source == "Bugs":
-			musicId = self.scrapBugs(title, artist)
+			musicId = self.scrapBugs(title, artist, album)
 			return musicId
 
 	# Either from "Melon", "Youtube", "Navermusic", "Bugs"
@@ -226,7 +226,7 @@ class Crawler():
 						title = row[0]
 						artist = row[1] 
 						album = row[2]
-						trackId = self.scrapSource(source, title, artist)
+						trackId = self.scrapSource(source, title, artist, album)
 						row.append(trackId)
 						writer.writerow(row)		
 		

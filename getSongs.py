@@ -89,11 +89,24 @@ def start(total_machines_num, this_machine_num):
                     album = select_albums[i].select('.title')[0].get_text().strip()
                     select_titles = select_albums[i].select('.track-list')
                     for j in range(len(select_titles)):
-                        title = select_titles[j].select('.name')[0].get_text().strip()
-                        artist = select_titles[j].select('.artist')[0].get_text().strip()
-                        img_url = select_titles[j].select('.img-thumbnail')[0]['src']
-                        trackID_beat = select_titles[j].select('.thumbnail')[0]['href']
-                        trackID_beat = trackID_beat[(len(trackID_beat)-7):(len(trackID_beat)-1)]
+                        if not select_titles[j].select('.name')[0]:
+                            title = select_titles[j].select('.name')[0].get_text().strip()
+                        else:
+                            title = ""
+                        if not select_titles[j].select('.artist')[0]:    
+                            artist = select_titles[j].select('.artist')[0].get_text().strip()
+                        else:
+                            artist = ""
+                        if not select_titles[j].select('.img-thumbnail')[0]:
+                            img_url = select_titles[j].select('.img-thumbnail')[0]['src']
+                        else:
+                            img_url = ""
+                        if not select_titles[j].select('.thumbnail')[0]:
+                            trackID_beat = select_titles[j].select('.thumbnail')[0]['href']
+                            trackID_beat = trackID_beat[(len(trackID_beat)-7):(len(trackID_beat)-1)]
+                        else:
+                            trackID_beat = ""
+                        
                         row = [title, artist, album, img_url, trackID_beat, Index]
                         writer.writerow(row)
                     
@@ -105,5 +118,3 @@ def start(total_machines_num, this_machine_num):
 
     error_page_file.close()
     no_data_page_file.close()
-
-start(8,1)
