@@ -4,4 +4,4 @@ venv
 *.pyc
 errorPages
 noDataPages
-beat_tracks_info-*
+beat_tracks_info*
