@@ -15,9 +15,11 @@ CREATE TABLE IF NOT EXISTS app_info (
      id     int(6)     not null     auto_increment,
      name     varchar(20)     not null,
      googleplay_url    varchar(1000)      default null,
-     iTunes_url     varchar(1000)     default null, 
      android_prefix     varchar(1000)     default null,
+     android_appendix     varchar(1000)     default null,
+     iTunes_url     varchar(1000)     default null, 
      ios_prefix   varchar(1000)     default null,
+     ios_appendix   varchar(1000)     default null,
      PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -45,8 +47,8 @@ CHARACTER SET utf8
 FIELDS TERMINATED BY ',' ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES
-(@col1, @col2, @col3, @col4, @col5)
-set name=@col1,  googleplay_url = @col2, iTunes_url = @col3, android_prefix = @col4, ios_prefix = @col5;
+(@col1, @col2, @col3, @col4, @col5, @col6, @col7)
+set name=@col1,  googleplay_url = @col2, android_prefix = @col3, android_appendix = @col4, iTunes_url = @col5, ios_prefix = @col6, ios_appendix = @col7;
 
 select * from app_info;
 
