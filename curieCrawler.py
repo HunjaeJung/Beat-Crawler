@@ -223,8 +223,9 @@ class Crawler():
 					writer = csv.writer(csvFile, csv.excel)
 
 					for row in reader:
-						artist = row[0] 
-						title = row[1]
+						title = row[0]
+						artist = row[1] 
+						album = row[2]
 						trackId = self.scrapSource(source, title, artist)
 						row.append(trackId)
 						writer.writerow(row)		
