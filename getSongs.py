@@ -12,8 +12,11 @@ import time
 
 # 16의 5승 (maximum)
 limit = pow(16, 5)
-Indexprefix = "000001"
+Indexprefix = "000000"
 base_url_artists = "http://beatpacking.com/artists/100000000000000000000000"
+
+error_page = []
+no_data_page = []
 
 #total_machines_num = 8 # total number of machines
 #this_machine_num = 1 # this machine number    
@@ -32,6 +35,14 @@ def start(total_machines_num, this_machine_num):
     proc_before = 0
     proc_now = 0
     trackID_beat = 0
+
+    with open("noDataPages","w") as clearfile:
+        clearfile.write("")
+    with open("errorPages","w") as clearfile:
+        clearfile.write("")
+
+    no_data_page_file = open("noDataPages", 'a')
+    error_page_file = open("errorPages", 'a')
 
     with open(file_name, 'w') as csvFile:
         writer = csv.writer(csvFile, csv.excel)
@@ -69,6 +80,10 @@ def start(total_machines_num, this_machine_num):
                 select_albums = soup.select('body > div.container.outer > div')
                 print("Artist %s has %d albums" % (Index, len(select_albums)))
 
+                if len(select_albums) == 0:
+                    no_data_page_file.write(Index)
+                    no_data_page_file.write("\n")
+
                 #2. 제목, 가수, 앨범, 썸네일유알엘, track_id of 비트, 출처 url_index
                 for i in range(len(select_albums)):
                     album = select_albums[i].select('.title')[0].get_text().strip()
@@ -83,8 +98,12 @@ def start(total_machines_num, this_machine_num):
                         writer.writerow(row)
                     
             except IOError as e:
+                error_page_file.write(Index)
+                error_page_file.write("\n")
                 print (e)
                 continue
 
-    print("Last one is %d" % trackID_beat)
+    error_page_file.close()
+    no_data_page_file.close()
 
+start(8,1)
