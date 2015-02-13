@@ -19,7 +19,6 @@ import pymysql
 
 class database:
 	def __init__(self):
-		self.connectDB()
 		return
 
 	def connectDB(self):
@@ -237,6 +236,8 @@ class Crawler(database):
 			ts = time.time()
 			st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 			logging.debug(st)
+			
+			self.connectDB()
 
 			with open(self.fileName, mode='r', newline='') as f:
 				# connect to database
@@ -274,4 +275,4 @@ class Crawler(database):
 		   logging.exception('Got exception on scrapAll')
 
 c = Crawler("./data/beat_tracks_info-3")
-c.scarpFrom("Melon",3)
+c.scrapFrom("Melon",3)
