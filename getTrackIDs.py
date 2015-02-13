@@ -23,7 +23,8 @@ class database:
 		return
 
 	def connectDB(self):
-		self.conn = pymysql.connect(host='127.0.0.1', unix_socket='/tmp/mysql.sock', user='root', passwd=None, db='curie_finish', charset='utf8')
+		# self.conn = pymysql.connect(host='127.0.0.1', unix_socket='/tmp/mysql.sock', user='root', passwd=None, db='curie_finish', charset='utf8')
+		self.conn = pymysql.connect(host='127.0.0.1', unix_socket='/tmp/mysql.sock', user='root', passwd='xpgpfks!@', db='curie_finish', charset='utf8')
 		self.cur = self.conn.cursor()
 		return
 
