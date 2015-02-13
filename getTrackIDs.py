@@ -37,7 +37,8 @@ class database:
 		# 	print(res)
 		return
 
-	def InsertSongInfo(self):
+	def InsertSongInfo(self, title, artist, album, ImgURL, lyrics):
+
 		return
 
 	def InsertLinkIds(self, title, artist, album, appTrackID, appnum):
@@ -88,13 +89,6 @@ class Crawler(database):
 		self.DEVELOPER_KEY = token	
 		self.YOUTUBE_API_SERVICE_NAME = "youtube"
 		self.YOUTUBE_API_VERSION = "v3"
-		
-		LOG_FILENAME = 'logging.out'
-		logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
-		logging.debug('Musicurie traceback log. It starts at')
-		ts = time.time()
-		st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-		logging.debug(st)
 
 	def changeFile(self, fileName):
 		self.fileName = fileName
@@ -237,6 +231,13 @@ class Crawler(database):
 
 	def scrapFrom(self, source, appID):
 		try:
+			LOG_FILENAME = 'logging.out-' + source
+			logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+			logging.debug('Musicurie traceback log. It starts at')
+			ts = time.time()
+			st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+			logging.debug(st)
+
 			with open(self.fileName, mode='r', newline='') as f:
 				# connect to database
 				reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_MINIMAL)
@@ -271,3 +272,6 @@ class Crawler(database):
 
 		except:
 		   logging.exception('Got exception on scrapAll')
+
+c = Crawler("./data/beat_tracks_info-3")
+c.scarpFrom("Melon",3)
