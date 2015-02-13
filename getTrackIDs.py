@@ -19,10 +19,11 @@ import pymysql
 
 class database:
 	def __init__(self):
+		self.connectDB()
 		return
 
 	def connectDB(self):
-		self.conn = pymysql.connect(host='127.0.0.1', unix_socket='/tmp/mysql.sock', user='root', passwd=None, db='curie_finish')
+		self.conn = pymysql.connect(host='127.0.0.1', unix_socket='/tmp/mysql.sock', user='root', passwd=None, db='curie_finish', charset='utf8')
 		self.cur = self.conn.cursor()
 		return
 
@@ -38,23 +39,41 @@ class database:
 	def InsertSongInfo(self):
 		return
 
-	def InsertLinkIds(self, title, artist, album, beat, melon, navermusic, youtube, bugs):
+	def InsertLinkIds(self, title, artist, album, appTrackID, appnum):
 		# query go!
-		prev = time.time()
-		query = "INSERT INTO link_ids(`song_id`, `app_id`, `link_id`, `usable`) VALUES((SELECT id FROM curie_finish.song_info WHERE title=" + title + " AND artist = " + artist + " AND album = " + album + " limit 1), 1, " + beat + ", True)"
-		self.cur.execute(query)
-		query = "INSERT INTO link_ids(`song_id`, `app_id`, `link_id`, `usable`) VALUES((SELECT id FROM curie_finish.song_info WHERE title=" + title + " AND artist = " + artist + " AND album = " + album + " limit 1), 3, " + melon + ", True)"
-		self.cur.execute(query)
-		query = "INSERT INTO link_ids(`song_id`, `app_id`, `link_id`, `usable`) VALUES((SELECT id FROM curie_finish.song_info WHERE title=" + title + " AND artist = " + artist + " AND album = " + album + " limit 1), 4, " + navermusic + ", True)"
-		self.cur.execute(query)
-		query = "INSERT INTO link_ids(`song_id`, `app_id`, `link_id`, `usable`) VALUES((SELECT id FROM curie_finish.song_info WHERE title=" + title + " AND artist = " + artist + " AND album = " + album + " limit 1), 5, " + youtube + ", True)"
-		self.cur.execute(query)
-		query = "INSERT INTO link_ids(`song_id`, `app_id`, `link_id`, `usable`) VALUES((SELECT id FROM curie_finish.song_info WHERE title=" + title + " AND artist = " + artist + " AND album = " + album + " limit 1), 2, " + bugs + ", True)"
-		self.cur.execute(query)
-		after = time.time()		
-		print("DB" + str(round(after-prev, 2)) + " sec for " + sources[s])
+		try:
+			prev = time.time()
+			query_list = []
+			query_list.append('INSERT INTO link_ids(`song_id`, `app_id`, `link_id`, `usable`) VALUES((SELECT id FROM curie_finish.song_info WHERE title=')
+			query_list.append('"')
+			query_list.append(title)
+			query_list.append('"')
+			query_list.append(' AND artist = ')
+			query_list.append('"')
+			query_list.append(artist)
+			query_list.append('"')
+			query_list.append(' AND album = ' )
+			query_list.append('"')
+			query_list.append(album)
+			query_list.append('"')
+			query_list.append(' limit 1), ')
+			query_list.append(str(appnum))
+			query_list.append(', ')
+			query_list.append('"')
+			query_list.append(appTrackID)
+			query_list.append('"')
+			query_list.append(', True)')
+			query = ''.join(query_list)
 
-		return
+			self.cur.execute(query)
+			self.conn.commit()
+			after = time.time()
+			print(query)
+			print("Insert row takes" + str(round(after-prev, 10)) + " sec")
+
+		except Exception as e:
+			logging.exception(e)
+			return
 
 class Crawler(database):
 	def __init__(self, fileName):
@@ -121,14 +140,16 @@ class Crawler(database):
 
 			htmlElement = soup.select("#section-list > li > ol > li > div > div > div.yt-lockup-content > h3 > a")
 
+			found = 0
 			for i in range(len(htmlElement)):
 				html = htmlElement[i].get_text().strip()
 				if title in html:
+					found=1
 					break
 				else:
 					continue
 
-			if(i == 0):
+			if(found == 0):
 				print("[Youtube] id is not in the html content")
 				return "0"
 			else: 
@@ -182,14 +203,16 @@ class Crawler(database):
 			soup = BeautifulSoup(contents.read())
 			
 			# get play button by class name
-			playButton = soup.select("#wrap > div.resultView > div.scrollArea > div#scrollSearch > ul.searchTrackList > li.listRow first")
+			playButton = soup.select("#scrollSearch > ul > li")
 
+			print(playButton[0]['id'])
+			print("--------")
 			# if there is no music, return
 			if not playButton:
 				print("[Bugs] id is not in the html content")
 				return "0"
 			else:
-				trackId = playButton[0]['onclick'].split('\'')[1]
+				trackId = playButton[0]['id']
 				print("[Bugs] id is found and it is ", trackId)
 				return trackId
 
@@ -211,62 +234,42 @@ class Crawler(database):
 			musicId = self.scrapBugs(title, artist, album)
 			return musicId
 
-	def scrapAll(self, sources):
+	def scrapFrom(self, source, appID):
 		try:
 			with open(self.fileName, mode='r', newline='') as f:
 				# connect to database
-				self.connectDB()
-				self.InsertAppInfo()
+				reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
-				# open csv format file
-				reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_NONE)
-
-				# set new filename
-				new_filename = self.fileName
-				temp_str = []
-				temp_str.append(new_filename)
-				for i in range(len(sources)):
-					temp_str.append("-(")
-					temp_str.append(sources[i])
-					temp_str.append(")")
-				new_filename = ''.join(temp_str)
-
-				# open file for write
+				new_filename = self.fileName + '(' + source + ')'
 				with open(new_filename,'w') as csvFile:
 					writer = csv.writer(csvFile, csv.excel)
 
+					# [Artist], [Title], [Album], [AlbumImageUrl], [BeatArtistID], [BeatTrackID]
 					for row in reader:
 						title = row[0]
 						artist = row[1] 
 						album = row[2]
-						totalsec = 0
-						for s in range(len(sources)):
-							prev = time.time()
-							trackId = self.scrapSource(sources[s], title, artist, "")
-							after = time.time()
-							print(str(round(after-prev, 2)) + " sec for " + sources[s])
-							totalsec += after-prev
-							if not trackId:
-								trackId=0
-							row.append(trackId)
 						
-						writer.writerow(row)
+						prev = time.time()
+						trackId = self.scrapSource(source, title, artist, album)
+						after = time.time()
+						print(str(round(after-prev, 2)) + " sec for " + source)
 
-						# beat = row[4]
-						# melon = row[6]
-						# navermusic = row[7]
-						# youtube = row[8]
-						# bugs = row[9]
+						if not trackId:
+							trackId=0
+						row.append(trackId)
 
-						# self.InsertLinkIds(title, artist, album, beat, melon, navermusic, youtube, bugs)
-						print("----------"+row[4]+" is done ("+str(round(totalsec,2))+" seconds)-----------")		
-						return
+						writer.writerow(row)	
+
+						# print(title)
+						# print(artist)
+						# print(trackId)
+						if trackId != "0":
+							self.InsertLinkIds(title, artist, album, trackId, appID)
 				return new_filename
 
-		except: 
+		except:
 		   logging.exception('Got exception on scrapAll')
 
-c = Crawler("tracks_info_by_beat-4")
-# sources = ["Melon", "Navermusic", "Youtube", "Bugs"]
-sources = ["Youtube"]
-c.scrapAll(sources)
+c = Crawler("beat_sample")
+c.scrapFrom("Navermusic",4)

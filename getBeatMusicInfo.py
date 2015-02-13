@@ -6,9 +6,9 @@ import sys
 import csv
 import time
 
-# 마지막일 것이라 추측: http://beatpacking.com/artists/100000000000000000000000062e09/
-# int("62e09",16) = 405001
-# 대략 40만개
+# update: 13 Feb 2015
+# crawling URL: http://beatpacking.com/artists/100000000000000000000000063680/
+# Last one: int("63680",16) = 407168
 
 # 16의 5승 (maximum)
 def start(start, end, this_machine_num):
@@ -19,7 +19,7 @@ def start(start, end, this_machine_num):
     end_point = int(end,16)
 
     # csv 파일명
-    file_name = "tracks_info_by_beat"
+    file_name = "beat_tracks_info"
     file_name = file_name + "-" + str(this_machine_num)      
 
     # 남은 시간 계산
@@ -114,6 +114,3 @@ def start(start, end, this_machine_num):
     no_data_page_file.close()
 
     return file_name
-
-#start("054b08", "06000c", 4)
-start("062e06", "06f000", 6)
