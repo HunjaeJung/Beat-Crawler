@@ -4,3 +4,4 @@ venv
 *.pyc
 beat_tracks_info*
 logging.out
+data/*

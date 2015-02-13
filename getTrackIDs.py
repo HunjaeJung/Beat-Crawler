@@ -270,6 +270,3 @@ class Crawler(database):
 
 		except:
 		   logging.exception('Got exception on scrapAll')
-
-c = Crawler("beat_sample")
-c.scrapFrom("Navermusic",4)
