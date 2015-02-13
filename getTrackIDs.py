@@ -16,14 +16,15 @@ import re
 import logging
 import datetime
 import pymysql
+import multiprocessing
 
 class database:
 	def __init__(self):
 		return
 
 	def connectDB(self):
-		# self.conn = pymysql.connect(host='127.0.0.1', unix_socket='/tmp/mysql.sock', user='root', passwd=None, db='curie_finish', charset='utf8')
-		self.conn = pymysql.connect(host='127.0.0.1', user='root', passwd='xpgpfks!@', db='curie_finish', charset='utf8')
+		self.conn = pymysql.connect(host='127.0.0.1', unix_socket='/tmp/mysql.sock', user='root', passwd=None, db='curie_finish', charset='utf8')
+		# self.conn = pymysql.connect(host='127.0.0.1', user='root', passwd='xpgpfks!@', db='curie_finish', charset='utf8')
 		self.cur = self.conn.cursor()
 		return
 
@@ -37,7 +38,6 @@ class database:
 		return
 
 	def InsertSongInfo(self, title, artist, album, ImgURL, lyrics):
-
 		return
 
 	def InsertLinkIds(self, title, artist, album, appTrackID, appnum):
@@ -123,7 +123,6 @@ class Crawler(database):
 			modifiedQuery = quote(originalQuery)
 			modifiedURL = "https://www.youtube.com/results?search_query=" + modifiedQuery
 
-			print(modifiedURL)
 			f = urlopen(modifiedURL, timeout=5)
 			html = f.read().decode('utf-8')
 			soup = BeautifulSoup(html)
@@ -191,7 +190,6 @@ class Crawler(database):
 				modifiedURL = modifiedURL + "%20" + quote(artist)
 			modifiedURL = modifiedURL + "&page=1&decorator='blank_rest'&isBasic='N'"
 
-			print(modifiedURL)
 			# url open, html read and beautifulsoup
 			contents=urlopen(modifiedURL, timeout=5)
 			soup = BeautifulSoup(contents.read())
@@ -199,8 +197,6 @@ class Crawler(database):
 			# get play button by class name
 			playButton = soup.select("#scrollSearch > ul > li")
 
-			print(playButton[0]['id'])
-			print("--------")
 			# if there is no music, return
 			if not playButton:
 				print("[Bugs] id is not in the html content")
@@ -228,9 +224,10 @@ class Crawler(database):
 			musicId = self.scrapBugs(title, artist, album)
 			return musicId
 
-	def scrapFrom(self, source, appID):
+	def scrapFrom(self, filenum, appID, source):
 		try:
-			LOG_FILENAME = 'logging.out-' + source
+			LOG_FILENAME = "logging.out-"+str(filenum)+"-"+str(source)
+
 			logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
 			logging.debug('Musicurie traceback log. It starts at')
 			ts = time.time()
@@ -264,9 +261,6 @@ class Crawler(database):
 
 						writer.writerow(row)	
 
-						# print(title)
-						# print(artist)
-						# print(trackId)
 						if trackId != "0":
 							self.InsertLinkIds(title, artist, album, trackId, appID)
 				return new_filename
@@ -274,5 +268,23 @@ class Crawler(database):
 		except:
 		   logging.exception('Got exception on scrapAll')
 
-c = Crawler("./data/beat_tracks_info-3")
-c.scrapFrom("Melon",3)
+
+if __name__ == '__main__':
+	app_order = ["Melon", "Navermusic", "Youtube", "Bugs"]
+	app_info = {"Beat":1, "Bugs":2, "Melon":3, "Navermusic":4, "Youtube":5}
+	num_of_files = 7
+	c = []
+
+	for i in range(num_of_files):
+		c.append(Crawler("./data/beat_tracks_info-"+str(i+1)))
+
+	jobs = []
+	for i in range(len(c)):
+		for j in range(len(app_order)):
+			print(str(i+1)+"-"+app_order[j]+"-"+str(app_info[app_order[j]]))
+			p = multiprocessing.Process(name=str(i+1)+"-"+app_order[j], target=c[i].scrapFrom, args=((i+1), app_info[app_order[j]],app_order[j], ))
+			jobs.append(p)
+	
+	for i in range(len(c)):
+		for j in range(len(app_order)):
+			jobs[i*len(app_order)+j].start()
