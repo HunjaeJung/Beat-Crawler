@@ -21,3 +21,8 @@ $ >> c.scrapFrom([소스명]) // c.scrapFrom("Youtube") "Youtube", "Melon", "Nav
 ```
 
 *위를 실행하게 되면 뒤에 소스명이 붙은 새로운 csv 파일이 생성되게 됩니다. (e.g. "beat_tracks_info-4(Melon)")*
+
+#### 3. 1번과 2번의 과정을 한번의 코드로 실행시키기 위해 startToCrawl.py를 수정한 뒤 아래와 같이 입력합니다.
+```
+$ python3 startToCrawl.py
+```

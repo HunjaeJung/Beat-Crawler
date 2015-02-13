@@ -1,6 +1,0 @@
-app_name, android_market, iTunes, android_prefix, iOS_prefix
-beat, 1,2,3,4
-navermusic, market://details?id=com.nhn.android.music, http://itunes.apple.com/kr/app/id437760231, comnhncorpnavermusic://listen?version=3&trackIds=, comnhncorpnavermusic://listen?version=3&trackIds=
-bugs, market://details?id=com.neowiz.android.bugs,  bugs3://app/tracks/lists?title=&track_ids=, http://itunes.apple.com/kr/app//id348555322?mt=8, bugs3://app/tracks/lists?title=&track_ids=, bugs3://app/tracks/
-melon, market://details?id=com.iloen.melon, https://itunes.apple.com/kr/app/mellon-melon/id415597317?mt=8, melonapp://play?ctype=1, meloniphone://play?ctype=1
-youtube, 1,2,3,4

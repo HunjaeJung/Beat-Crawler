@@ -11,23 +11,15 @@ import time
 # 대략 40만개
 
 # 16의 5승 (maximum)
-limit = pow(16, 5)
-Indexprefix = "000000"
-base_url_artists = "http://beatpacking.com/artists/100000000000000000000000"
+def start(start, end, this_machine_num):
+    Indexprefix = "000000"
+    base_url_artists = "http://beatpacking.com/artists/100000000000000000000000"
 
-error_page = []
-no_data_page = []
-
-#total_machines_num = 8 # total number of machines
-#this_machine_num = 1 # this machine number    
-def start(total_machines_num, this_machine_num):
-    # crawl machines 정보
-    one_cycle = limit/total_machines_num        # one cycle range
-    start_point = int(one_cycle*(this_machine_num-1))    # starting point
-    end_point = int(one_cycle*this_machine_num)      # end point 
+    start_point = int(start,16)
+    end_point = int(end,16)
 
     # csv 파일명
-    file_name = "beat_tracks_info"
+    file_name = "tracks_info_by_beat"
     file_name = file_name + "-" + str(this_machine_num)      
 
     # 남은 시간 계산
@@ -89,24 +81,26 @@ def start(total_machines_num, this_machine_num):
                     album = select_albums[i].select('.title')[0].get_text().strip()
                     select_titles = select_albums[i].select('.track-list')
                     for j in range(len(select_titles)):
-                        if not select_titles[j].select('.name')[0]:
+                        if select_titles[j].select('.name')[0]:
                             title = select_titles[j].select('.name')[0].get_text().strip()
                         else:
                             title = ""
-                        if not select_titles[j].select('.artist')[0]:    
+                        if select_titles[j].select('.artist')[0]:    
                             artist = select_titles[j].select('.artist')[0].get_text().strip()
                         else:
                             artist = ""
-                        if not select_titles[j].select('.img-thumbnail')[0]:
+                        if select_titles[j].select('.img-thumbnail')[0]:
                             img_url = select_titles[j].select('.img-thumbnail')[0]['src']
                         else:
                             img_url = ""
-                        if not select_titles[j].select('.thumbnail')[0]:
+                        if select_titles[j].select('.thumbnail')[0]:
                             trackID_beat = select_titles[j].select('.thumbnail')[0]['href']
                             trackID_beat = trackID_beat[(len(trackID_beat)-7):(len(trackID_beat)-1)]
                         else:
                             trackID_beat = ""
                         
+                        # Index is artist number from Beat
+                        # row = [artist, title, album, img_url, Index, trackID_beat]
                         row = [title, artist, album, img_url, trackID_beat, Index]
                         writer.writerow(row)
                     
@@ -118,3 +112,8 @@ def start(total_machines_num, this_machine_num):
 
     error_page_file.close()
     no_data_page_file.close()
+
+    return file_name
+
+#start("054b08", "06000c", 4)
+start("062e06", "06f000", 6)

@@ -1,62 +1,3 @@
-#----- Protocol -----#
-
-##### Beat #####
-# 1.beat-ios: bpc://landing?type=play_radio&channel_id=60&track_id=300000000000000000000000{{musicId}} 
-# - prefix: bpc://landing?type=play_radio&channel_id=60&track_id=300000000000000000000000
-# - appendix: {{musicId}} 
-# 2.beat-itunes: itms-apps://itunes.apple.com/app/beat-biteu-mulyo-ladio-sosyeol/id853073541?mt=8
-# 3.beat-android: bpc://landing?type=play_radio&channel_id=60&track_id=300000000000000000000000{{musicId}} 
-# - prefix: bpc://landing?type=play_radio&channel_id=60&track_id=300000000000000000000000
-# - appendix: {{musicId}}
-# 4.beat-googleplay: market://details?id=com.beatpacking.beat
-##### End of Bugs #####
-
-##### Bugs #####
-# 1.bugs-ios: bugs3://app/tracks/3285722?autoplay=Y
-# - prefix: bugs3://app/tracks/
-# - appendix: 3285722?autoplay=Y
-# 2.bugs-itunes: itms-apps://itunes.apple.com/kr/app//id348555322?mt=8 
-# 3.bugs-android: 
-# - prefix: bugs3://app/tracks/lists?title=&track_ids=
-# - appendix: {{musicId}}&autoplay=Y
-# 4.bugs-googleplay: market://details?id=com.neowiz.android.bugs
-##### End of Bugs #####
-
-##### Melon #####
-# 1.melon-ios: meloniphone://play?ctype=1&menuid=29020101&cid=5536206
-# - prefix: meloniphone://play?ctype=1&menuid=29020101&cid=
-# - appendix: 5536206
-# 2.melon-itunes: itms-apps://itunes.apple.com/kr/app/mellon-melon/id415597317?mt=8
-# 3.melon-android: melonapp://play?ctype=1&menuid=29020101&cid=5536206
-# - prefix: melonapp://play?ctype=1
-# - appendix: &menuid=29020101&cid=5536206
-# 4.melon-googleplay: market://details?id=com.iloen.melon
-##### End of Melon #####
-
-##### Navermusic #####
-# 1.navermusic-ios: comnhncorpnavermusic://listen?version=3&trackIds=2037246
-# - prefix: comnhncorpnavermusic://listen?version=3&trackIds=
-# - appendix: 2037246
-# 2.navermusic-itunes: itms-apps://itunes.apple.com/kr/app/id437760231
-# 3.navermusic-android: intent://listen?version=3&trackIds=2037246#Intent;scheme=comnhncorpnavermusic;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.music;end
-# - prefix: intent://listen?version=3&trackIds=
-# - appendix: 2037246#Intent;scheme=comnhncorpnavermusic;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.music;end
-# 4.navermusic-googleplay: market://details?id=com.nhn.android.music
-##### End of Bugs #####
-
-##### Youtube #####
-# 1.youtube-ios: 
-# - prefix: vnd.youtube://www.youtube.com/watch?v={{musicId}};feature=applinks
-# - appendix: 
-# 2.youtube-itunes: itms-apps://itunes.apple.com/app/youtube/id544007664?mt=8
-# 3.youtube-android: http://www.youtube.com/watch?v={{musicId}};feature=applinks
-# - prefix: http://www.youtube.com/watch?v=
-# - appendix: {{musicId}};feature=applinks
-# 4.youtube-googleplay: market://details?id=com.google.android.youtube
-##### End of Bugs #####
-
-#----- End of Protocol -----#
-
 ##### Youtube #####
 from apiclient.discovery import build
 from apiclient.errors import HttpError
@@ -114,9 +55,9 @@ class Crawler():
 		except Exception as e: 
 			print("error from scrapMelon method: ", e)
 
-	def scrapYoutube(self, title, artist, album):
+	def scrapYoutube(self, title, artist):
 		try:
-			originalQuery = artist + " " + title + " " + album
+			originalQuery = artist + " " + title
 			
 			youtube = build(self.YOUTUBE_API_SERVICE_NAME, self.YOUTUBE_API_VERSION, developerKey=self.DEVELOPER_KEY)
 
@@ -151,8 +92,10 @@ class Crawler():
 	def scrapNavermusic(self, title, artist, album):
 		try:
 			modifiedURL = "http://music.naver.com/search/search.nhn?query=" + quote(title) 
-			if artist != "null":
+			if artist != "":
 				modifiedURL = modifiedURL + "%20" + quote(artist)
+			if album != "":
+				modifiedURL = modifiedURL + "%20" + quote(album)
 
 			# url open, html read and beautifulsoup
 			a=urlopen(modifiedURL).read()
@@ -176,8 +119,10 @@ class Crawler():
 	def scrapBugs(self, title, artist, album):
 		try:
 			modifiedURL = "http://search.bugs.co.kr/track?q=" + quote(title) 
-			if artist != "null":
+			if artist != "":
 				modifiedURL = modifiedURL + "%20" + quote(artist)
+			if album != "":
+				modifiedURL = modifiedURL + "%20" + quote(album)
 
 			# url open, html read and beautifulsoup
 			a=urlopen(modifiedURL).read()
@@ -204,7 +149,7 @@ class Crawler():
 			musicId = self.scrapMelon(title, artist, album)
 			return musicId
 		elif source == "Youtube":
-			musicId = self.scrapYoutube(title, artist, album)
+			musicId = self.scrapYoutube(title, artist)
 			return musicId
 		elif source == "Navermusic":
 			musicId = self.scrapNavermusic(title, artist, album)
@@ -219,9 +164,11 @@ class Crawler():
 			with open(self.fileName, mode='r', newline='') as f:
 				reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_NONE)
 
-				with open(self.fileName + '(' + source + ')','w') as csvFile:
+				new_filename = self.fileName + '(' + source + ')'
+				with open(new_filename,'w') as csvFile:
 					writer = csv.writer(csvFile, csv.excel)
 
+					# [Artist], [Title], [Album], [AlbumImageUrl], [BeatArtistID], [BeatTrackID]
 					for row in reader:
 						title = row[0]
 						artist = row[1] 
@@ -230,7 +177,44 @@ class Crawler():
 						row.append(trackId)
 						writer.writerow(row)		
 		
+				return new_filename
+
 		except Exception as e:
 			print("error from createCSV method: ", e)
 
+	def scrapAll(self, sources):
+		try:
+			with open(self.fileName, mode='r', newline='') as f:
+				reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_NONE)
+
+				new_filename = self.fileName
+				for i in range(len(sources)):
+					new_filename+="("
+					new_filename+=sources[i]
+					new_filename+=")"
+
+				with open(new_filename,'w') as csvFile:
+					writer = csv.writer(csvFile, csv.excel)
+
+					for row in reader:
+						title = row[0]
+						artist = row[1] 
+						album = row[2]
+						for s in range(len(sources)):
+							trackId = self.scrapSource(sources[s], title, artist, album)
+							if not trackId:
+								trackId=0
+							row.append(trackId)
+						
+						writer.writerow(row)
+						print(row[1]+"'s"+row[0]+"is done!")		
 		
+				return new_filename
+
+		except Exception as e:
+			print("error from createCSV method: ", e)
+
+c = Crawler("sample")
+sources = ["Melon", "Navermusic", "Youtube", "Bugs"]
+sources = ["Youtube"]
+c.scrapAll(sources)
