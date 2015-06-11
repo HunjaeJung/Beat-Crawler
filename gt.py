@@ -64,43 +64,50 @@ def start(start, end):
             else:
             	proc_before = time.time()
 
-            # 해당 URI가 404가 아닐때 가수명, 곡명, 사진을 가져옴
-            soup = BeautifulSoup(urlopen(base_url).read())
+            try:
+                # 해당 URI가 404가 아닐때 가수명, 곡명, 사진을 가져옴
+                soup = BeautifulSoup(urlopen(base_url).read())
 
-            # 1. 앨범고르고
-            select_track = soup.select('body > div.container.outer.track-card > div.container.comment > div')
+                # 1. 앨범고르고
+                select_track = soup.select('body > div.container.outer.track-card > div.container.comment > div')
 
-            if len(select_track) == 0:
-                no_data_page_file.write(Index)
-                no_data_page_file.write("\n")
+                if len(select_track) == 0:
+                    no_data_page_file.write(Index)
+                    no_data_page_file.write("\n")
 
-            else:
-                title =  select_track[0].select('.track-name')
-                if title:
-                    title = title[0].get_text().strip().split(',')[0]
                 else:
-                    continue
+                    title =  select_track[0].select('.track-name')
+                    if title:
+                        title = title[0].get_text().strip().split(',')[0]
+                    else:
+                        continue
 
-                artist =  select_track[0].select('.artist')
-                if artist:
-                    artist = artist[0].get_text().strip()
-                else:
-                    artist = "null"
+                    artist =  select_track[0].select('.artist')
+                    if artist:
+                        artist = artist[0].get_text().strip()
+                    else:
+                        artist = "null"
 
-                img_url =  select_track[0].select('.track-cover-img')
-                if img_url:
-                    img_url = img_url[0]['src']
-                else:
-                    img_url = "null"
+                    img_url =  select_track[0].select('.track-cover-img')
+                    if img_url:
+                        img_url = img_url[0]['src']
+                    else:
+                        img_url = "null"
 
-                album = "null"
-                trackID_beat = Index
+                    album = "null"
+                    trackID_beat = Index
 
-                print('We"ve got: ' + title + ' - ' + artist + ' for ' + trackID_beat)
+                    print('We"ve got: ' + title + ' - ' + artist + ' for ' + trackID_beat)
 
-            #2. 제목, 가수, 앨범, 썸네일유알엘, track_id of 비트, 출처 url_index
-            row = [title, artist, album, img_url, trackID_beat, Index]
-            writer.writerow(row)
+                #2. 제목, 가수, 앨범, 썸네일유알엘, track_id of 비트, 출처 url_index
+                row = [title, artist, album, img_url, trackID_beat, Index]
+                writer.writerow(row)
+
+            except IOError as e:
+                error_page_file.write(Index)
+                error_page_file.write("\n")
+                print (e)
+                continue
 
 
     error_page_file.close()
