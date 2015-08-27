@@ -11,7 +11,7 @@ import time
 # Last one: int("63680",16) = 407168
 
 # 16의 5승 (maximum)
-def start(start, end, this_machine_num):
+def start(start, end):
     Indexprefix = "000000"
     base_url_artists = "http://beatpacking.com/artists/100000000000000000000000"
 
@@ -20,10 +20,10 @@ def start(start, end, this_machine_num):
 
     # csv 파일명
     file_name = "beat_tracks_info"
-    file_name = file_name + "-" + str(this_machine_num)      
+    file_name = file_name + "-" + str(start) + "-" + str(end)
 
     # 남은 시간 계산
-    time_diff = 0   
+    time_diff = 0
     proc_before = 0
     proc_now = 0
     trackID_beat = 0
@@ -44,12 +44,12 @@ def start(start, end, this_machine_num):
             IndexToHexLength = len(IndexToHex)
             tempIndex = Indexprefix + IndexToHex
             Index = tempIndex[IndexToHexLength:]
-            
+
             base_url = base_url_artists + Index
 
             if i != start_point:
                 proc_now = time.time()
-        
+
                 if proc_now != proc_before:
                     time_diff = proc_now - proc_before
                     proc_before = proc_now
@@ -58,7 +58,7 @@ def start(start, end, this_machine_num):
                 min, sec = divmod(total_time_left,60)
                 hour, min = divmod(min, 60)
                 day, hour = divmod(hour, 24)
-            	
+
                 print ("%d일 %d시간 %d분 %d초 남았습니다." % (day, hour, min, sec))
 
             else:
@@ -85,7 +85,7 @@ def start(start, end, this_machine_num):
                             title = select_titles[j].select('.name')[0].get_text().strip()
                         else:
                             title = ""
-                        if select_titles[j].select('.artist')[0]:    
+                        if select_titles[j].select('.artist')[0]:
                             artist = select_titles[j].select('.artist')[0].get_text().strip()
                         else:
                             artist = ""
@@ -98,12 +98,12 @@ def start(start, end, this_machine_num):
                             trackID_beat = trackID_beat[(len(trackID_beat)-7):(len(trackID_beat)-1)]
                         else:
                             trackID_beat = ""
-                        
+
                         # Index is artist number from Beat
                         # row = [artist, title, album, img_url, Index, trackID_beat]
                         row = [title, artist, album, img_url, trackID_beat, Index]
                         writer.writerow(row)
-                    
+
             except IOError as e:
                 error_page_file.write(Index)
                 error_page_file.write("\n")

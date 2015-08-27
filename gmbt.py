@@ -11,7 +11,7 @@ import time
 # last: aa04af
 
 # 16의 5승 (maximum)
-def start(start, end, this_machine_num):
+def start(start, end):
     Indexprefix = "000000"
     base_url_track = "http://beatpacking.com/tracks/300000000000000000000000"
 
@@ -20,7 +20,7 @@ def start(start, end, this_machine_num):
 
     # csv 파일명
     file_name = "beat_tracks_info_by_track"
-    file_name = file_name + "-" + str(this_machine_num)
+    file_name = file_name + "-" + str(start) + "-" + str(end)
 
     # 남은 시간 계산
     time_diff = 0
@@ -64,8 +64,8 @@ def start(start, end, this_machine_num):
             else:
             	proc_before = time.time()
 
-            # 해당 URI가 404가 아닐때 가수명, 곡명, 사진을 가져옴
             try:
+                # 해당 URI가 404가 아닐때 가수명, 곡명, 사진을 가져옴
                 soup = BeautifulSoup(urlopen(base_url).read())
 
                 # 1. 앨범고르고
@@ -76,19 +76,25 @@ def start(start, end, this_machine_num):
                     no_data_page_file.write("\n")
 
                 else:
-                    title =  select_track[0].select('.track-name')[0]
+                    title =  select_track[0].select('.track-name')
                     if title:
-                        title = title.get_text().strip().split(',')[0]
+                        title = title[0].get_text().strip().split(',')[0]
+                    else:
+                        continue
 
-                    artist =  select_track[0].select('.artist')[0]
+                    artist =  select_track[0].select('.artist')
                     if artist:
-                        artist = artist.get_text().strip()
+                        artist = artist[0].get_text().strip()
+                    else:
+                        artist = "null"
 
-                    img_url =  select_track[0].select('.track-cover-img')[0]
+                    img_url =  select_track[0].select('.track-cover-img')
                     if img_url:
-                        img_url = img_url['src']
+                        img_url = img_url[0]['src']
+                    else:
+                        img_url = "null"
 
-                    album = "empty"
+                    album = "null"
                     trackID_beat = Index
 
                     print('We"ve got: ' + title + ' - ' + artist + ' for ' + trackID_beat)
@@ -103,7 +109,12 @@ def start(start, end, this_machine_num):
                 print (e)
                 continue
 
+
     error_page_file.close()
     no_data_page_file.close()
 
     return file_name
+
+
+if __name__ == "__main__":
+    start(sys.argv[1], sys.argv[2])
