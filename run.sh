@@ -37,19 +37,23 @@ done
 
 start=$1
 end=$2
+
+start="0"
+end="70000"
+
 jump=$(((end-start)/10))
-end=$((start+jump))
+next=$((start+jump))
 tmux send-keys -t 1 "clear" C-m
 
-for ((i=1;i<$((verticalN*2-1));i++))
+for ((i=1;i<$((verticalN*2));i++))
 do
 	tmux select-pane -t $i
-	tmux send-keys -t $i "$file $start $end" C-m
+	tmux send-keys -t $i "$file $start $next" C-m
 	start=$((start+jump))
-	end=$((start+jump))
+	next=$((start+jump))
 	sleep 0.5
 done
 
 lastPane=$((verticalN*2))
 tmux select-pane -t $lastPane
-tmux send-keys -t $lastPane "$file $start $2" C-m
+tmux send-keys -t $lastPane "$file $start $end" C-m
