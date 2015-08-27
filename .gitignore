@@ -4,5 +4,7 @@ venv
 *.pyc
 beat_tracks_info*
 logging.out*
-data/*
+data/error/error*
+data/no_data/no_data*
+data/crawled/beat*
 test.py
