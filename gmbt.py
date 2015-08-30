@@ -6,9 +6,9 @@ import sys
 import csv
 import time
 
-# update: 11 June 2015
+# update: 30 Aug 2015
 # http://beatpacking.com/tracks/300000000000000000000000
-# last: aa04af
+# last: aa0911
 
 # 16의 5승 (maximum)
 def start(start, end):
@@ -19,8 +19,12 @@ def start(start, end):
     end_point = int(end,16)
 
     # csv 파일명
-    file_name = "beat_tracks_info_by_track"
-    file_name = file_name + "-" + str(start) + "-" + str(end)
+    file_name = "./data/crawled/beat_tracks_info_by_track"
+    appendix = "-" + str(start) + "-" + str(end)
+
+    file_name = file_name + appendix
+    no_data_file_name = "./data/no_data/no_data_pages"+appendix
+    error_file_name = "./data/error/error_pages"+appendix
 
     # 남은 시간 계산
     time_diff = 0
@@ -28,13 +32,13 @@ def start(start, end):
     proc_now = 0
     trackID_beat = 0
 
-    with open("noDataPages","w") as clearfile:
+    with open(no_data_file_name,"w") as clearfile:
         clearfile.write("")
-    with open("errorPages","w") as clearfile:
+    with open(error_file_name,"w") as clearfile:
         clearfile.write("")
 
-    no_data_page_file = open("noDataPages", 'a')
-    error_page_file = open("errorPages", 'a')
+    no_data_page_file = open(no_data_file_name, 'a')
+    error_page_file = open(error_file_name, 'a')
 
     with open(file_name, 'w') as csvFile:
         writer = csv.writer(csvFile, csv.excel)

@@ -20,7 +20,7 @@ def start(start, end):
     end_point = int(end,16)
 
     # csv 파일명
-    file_name = "./data/crawled/beat_tracks_info"
+    file_name = "./data/crawled/beat_tracks_info_by_artist"
     appendix = "-" + str(start) + "-" + str(end)
 
     file_name = file_name + appendix
