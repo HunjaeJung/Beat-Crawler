@@ -1,14 +1,16 @@
 #!/bin/bash
 
-### sh autorun.sh 0 600000
-### Beat 크롤링 프로그램을 Autorun 합니다. 자동으로 n등분하여 tmux를 split하고, 크롤링을 시작합니다.
+### bash run.sh
+### Beat 크롤링 프로그램을 Autorun 합니다. 자동으로 verticalN*2등분하여 tmux를 split하고, 크롤링을 시작합니다.
 verticalN=10
 crawlBy="artist"
 #crawlBy="track"
 #start=$1
 #end=$2
+#start="0"
+#end="70000"
 start="0"
-end="70000"
+end="aa1000"
 
 if crawlBy="artist"
 then
