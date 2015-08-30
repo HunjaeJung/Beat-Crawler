@@ -14,3 +14,17 @@ artist id 기준(gmba.py)의 경우, 한 페이지에 곡 정보가 다량으로
  2. data/error: error message를 주는 id를 저장한다.
  3. data/no_data: 가긴 갔는데 data가 없는 id를 저장한다.
 5. temp: 현재는 사용되지 않는 소스를 담은 폴더입입니다.
+
+##### 프로그램 실행
+
+- MAC (tmux attach 이후)
+
+ ```
+  sh run.sh
+ ```
+
+- Ubuntu (tmux attach 이후)
+
+ ```
+  bash run.sh
+ ```
