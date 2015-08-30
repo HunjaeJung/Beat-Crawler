@@ -41,14 +41,27 @@ end=$2
 start="0"
 end="70000"
 
-jump=$(((end-start)/10))
+# hex to dec
+h2d(){
+    echo "ibase=16; $@"|bc
+}
+# dec to hex
+d2h(){
+    echo "obase=16; $@"|bc
+}
+
+# convert hexadecimal to decimal
+jump=$(((16#$end-16#$start)/10))
 next=$((start+jump))
 tmux send-keys -t 1 "clear" C-m
 
 for ((i=1;i<$((verticalN*2));i++))
 do
 	tmux select-pane -t $i
-	tmux send-keys -t $i "$file $start $next" C-m
+	# convert decimal to hexadecimal
+    start16=$(d2h $start)
+    next16=$(d2h $next)
+	tmux send-keys -t $i "$file $start16 $next16" C-m
 	start=$((start+jump))
 	next=$((start+jump))
 	sleep 0.5
@@ -56,4 +69,6 @@ done
 
 lastPane=$((verticalN*2))
 tmux select-pane -t $lastPane
-tmux send-keys -t $lastPane "$file $start $end" C-m
+# convert decimal to hexadecimal (end is already hexadecimal)
+start16=$(d2h $start)
+tmux send-keys -t $lastPane "$file $start16 $end" C-m
