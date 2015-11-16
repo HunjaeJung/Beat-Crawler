@@ -3,14 +3,15 @@
 ### bash run.sh
 ### Beat 크롤링 프로그램을 Autorun 합니다. 자동으로 verticalN*2등분하여 tmux를 split하고, 크롤링을 시작합니다.
 verticalN=5
-#crawlBy="artist"
-crawlBy="track"
+crawlBy="artist"
+#crawlBy="track"
 #start=$1
 #end=$2
 #start="0"
 #end="70000"
+# "1b28fc08"
 start="0"
-end="aa1000"
+end="60000"
 
 if [ $crawlBy == "artist" ]
 then
@@ -50,8 +51,8 @@ d2h(){
 }
 
 # convert hexadecimal to decimal
-jump=$(((16#$end-16#$start)/10))
-next=$((start+jump))
+jump=$((((16#$end-16#$start)/(verticalN*2))))
+next=$((16#$start+$jump))
 tmux send-keys -t 1 "clear" C-m
 
 for ((i=1;i<$((verticalN*2));i++))
